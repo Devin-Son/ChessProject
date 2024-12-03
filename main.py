@@ -8,7 +8,7 @@ import os
 class Game:
     def __init__(self):
         pg.init()
-        self.SCREEN_WIDTH, self.SCREEN_HEIGHT = pg.display.Info().current_w - (pg.display.Info().current_w * 0.3), pg.display.Info().current_h - (pg.display.Info().current_h * 0.3)
+        self.SCREEN_WIDTH, self.SCREEN_HEIGHT = MIN_SIZE_X, MIN_SIZE_Y
         self.DISPLAYSURF = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pg.RESIZABLE)
         self.DISPLAYSURF.fill((48, 46, 43))
         pg.display.set_caption('Chess Openings')
@@ -34,7 +34,9 @@ class Game:
                     mouse_pos = pg.mouse.get_pos()
                     self.board.get_click(mouse_pos, game)
             elif event.type == pg.VIDEORESIZE:
-                self.SCREEN_WIDTH, self.SCREEN_HEIGHT = max(event.w, 400), max(event.h, 400)
+                self.SCREEN_HEIGHT = max(event.h, MIN_SIZE_Y)
+                self.SCREEN_WIDTH = max(event.w, self.SCREEN_HEIGHT + int(MARGIN_PERCENTAGE * self.SCREEN_HEIGHT))
+
                 if (event.w or event.h):
                     self.DISPLAYSURF = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pg.RESIZABLE)
                     self.DISPLAYSURF.fill((48, 46, 43))

@@ -240,7 +240,7 @@ class Board:
                 real_move = move[-2:]
                 real_move = ord(real_move[0]) - 97, int(real_move[1]) - 1
                 rect = self._get_screen_coord_rect(real_move[0], (7 - real_move[1]))
-                circle_radius = 18
+                circle_radius = int((self.square_size * CIRCLE_SCALE) // 2)
                 center_x = rect[0] + (rect[2] // 2)  
                 center_y = rect[1] + (rect[3] // 2)
                 gfxdraw.filled_circle(self.board_surface, center_x, center_y, circle_radius, (0, 0, 0, 40))
