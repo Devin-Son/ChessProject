@@ -251,6 +251,13 @@ class Board:
         return ((columns * (self.board_dimension // COLUMNS)), (rows * (self.board_dimension // ROWS)), 
                 (self.board_dimension // COLUMNS), (self.board_dimension // ROWS))
 
+    def resize(self, screen_width, screen_height):
+        self.square_size = int(0.9 * screen_height) // 8
+        self.board_dimension = self.square_size * 8
+        self.board_surface = pg.Surface((self.board_dimension, self.board_dimension))
+        self.board_surface.fill((255, 255, 255))
+        self.show_board(self.game)
+        self.show_pieces(self.game)
 
     def _update(self, game):
         self.DISPLAYSURF.blit(self.board_surface, ((game.SCREEN_WIDTH - self.board_dimension) // 2, (game.SCREEN_HEIGHT - self.board_dimension) // 2)) # Board surface

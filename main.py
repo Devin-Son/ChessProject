@@ -8,8 +8,8 @@ import os
 class Game:
     def __init__(self):
         pg.init()
-        self.SCREEN_WIDTH, self.SCREEN_HEIGHT = pg.display.Info().current_w, pg.display.Info().current_h
-        self.DISPLAYSURF = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pg.SCALED)
+        self.SCREEN_WIDTH, self.SCREEN_HEIGHT = pg.display.Info().current_w - (pg.display.Info().current_w * 0.3), pg.display.Info().current_h - (pg.display.Info().current_h * 0.3)
+        self.DISPLAYSURF = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pg.RESIZABLE)
         self.DISPLAYSURF.fill((48, 46, 43))
         pg.display.set_caption('Chess Openings')
         icon = pg.image.load('resources/icon.ico')
@@ -33,6 +33,12 @@ class Game:
                 if event.button == 1:
                     mouse_pos = pg.mouse.get_pos()
                     self.board.get_click(mouse_pos, game)
+            elif event.type == pg.VIDEORESIZE:
+                self.SCREEN_WIDTH, self.SCREEN_HEIGHT = max(event.w, 400), max(event.h, 400)
+                if (event.w or event.h):
+                    self.DISPLAYSURF = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pg.RESIZABLE)
+                    self.DISPLAYSURF.fill((48, 46, 43))
+                    self.board.resize(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
 
 
     def run(self):
