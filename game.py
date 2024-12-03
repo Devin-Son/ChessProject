@@ -56,7 +56,8 @@ class Pawn(Piece):
         for capture_x in direction[0]:
             try:
                 if (self.check_obstruction(self.position[0], self.position[1], capture_x, direction[1], 1) == 0 and            # Obstructed diagonally
-                    (self.board.board[self.position[1] + direction[1]][self.position[0] + capture_x]).color != self.color):    # Opposite color
+                    (self.board.board[self.position[1] + direction[1]][self.position[0] + capture_x]).color != self.color and
+                    (self.position[1] + direction[1]) >= 0 and (self.position[0] + capture_x) >= 0):    # Opposite color
                     moves.append(f"{chr(self.position[0] + 97)}x{chr(self.position[0] + 97 + capture_x)}{int(self.coordinate[1]) + direction[1]}")
             except:
                 continue
@@ -73,6 +74,27 @@ class Rook(Piece):
 
     def legal_moves(self):
         moves = []
+        direction = [[0, 1], [-1, 0], [0, -1], [1, 0]]
+        
+
+        # Moves
+        for current_direction in direction:
+            available_distance = self.check_obstruction(self.position[0], self.position[1], current_direction[0], current_direction[1], None)
+            for step in range(available_distance):
+                moves.append(f"{chr(self.position[0] + (97 + (step + 1) * current_direction[0]))}"
+                             f"{int(self.coordinate[1]) + ((step + 1) * current_direction[1])}")
+            # Captures
+            try:
+                if (self.board.board[self.position[1] + (current_direction[1] * (available_distance + 1))]
+                                    [self.position[0] + (current_direction[0] * (available_distance + 1))].color != self.color):
+                    # TODO distuingish captures if two rooks in same column (Rhxd3) or same row (R3xa5). If two rooks can take same piece but
+                    # not in same row or column, distinguish by column. Assume that there can be any amount of rooks on the board.
+                    moves.append(f"Rx{chr(self.position[0] + (current_direction[0] * (available_distance + 1)) + 97)}"
+                                 f"{int(self.position[1] + (current_direction[1] * (available_distance + 1)) + 1)}")
+            except:
+                continue
+
+
 
         return moves
 
@@ -269,8 +291,11 @@ class Board:
 
 if __name__ == '__main__':
     board = Board(BOARD_SIZE, None)
-    board.place_piece(Rook('white', 'h6', board))
-    board.place_piece(Pawn('white', 'd6', board))
+    board.place_piece(Rook('black', 'h6', board))
+    board.place_piece(Pawn('white', 'a6', board))
     board.display()
     piece = board.get_piece_at(input("What piece would you like to see the available moves for? "))
-    print(piece.legal_moves())
+    if piece:
+        print(piece.legal_moves())
+    else:
+        print("Empty space")
