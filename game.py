@@ -212,10 +212,10 @@ class Board:
         board_y = (game.SCREEN_HEIGHT - self.board_dimension) // 2
 
         if board_x <= mouse_pos[0] <= board_x + self.board_dimension and board_y <= mouse_pos[1] <= board_y + self.board_dimension: # Is the mouse on the board?
-            col = (mouse_pos[0] - board_x) // self.square_size
-            row = (mouse_pos[1] - board_y) // self.square_size
-            board_row = ROWS - 1 - row
-
+            col = int((mouse_pos[0] - board_x) // self.square_size)
+            row = int((mouse_pos[1] - board_y) // self.square_size)
+            board_row = int(ROWS - 1 - row)
+            
             clicked_piece = self.board[board_row][col]
 
             if clicked_piece:
