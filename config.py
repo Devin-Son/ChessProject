@@ -8,4 +8,4 @@ MIN_SIZE_Y = 400
 MIN_SIZE_X = 400 + (MARGIN_PERCENTAGE * MIN_SIZE_Y)
 
 PIECE_SCALE = 252.083
-CIRCLE_SCALE = 0.6 # Determines diameter relative to the size of the square
+CIRCLE_SCALE = 0.29752 # Determines diameter relative to the size of the square
