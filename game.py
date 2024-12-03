@@ -2,6 +2,7 @@ import numpy as np
 from config import *
 from game import *
 import pygame.gfxdraw as gfxdraw
+from math import floor
 
 board = None
 
@@ -212,10 +213,10 @@ class Board:
         board_y = (game.SCREEN_HEIGHT - self.board_dimension) // 2
 
         if board_x <= mouse_pos[0] <= board_x + self.board_dimension and board_y <= mouse_pos[1] <= board_y + self.board_dimension: # Is the mouse on the board?
-            col = (mouse_pos[0] - board_x) // self.square_size
-            row = (mouse_pos[1] - board_y) // self.square_size
-            board_row = ROWS - 1 - row
-
+            col = int(floor((mouse_pos[0] - board_x) // self.square_size))
+            row = int(floor((mouse_pos[1] - board_y) // self.square_size))
+            board_row = int(floor(ROWS - 1 - row))
+            
             clicked_piece = self.board[board_row][col]
 
             if clicked_piece:
@@ -239,7 +240,7 @@ class Board:
                 real_move = move[-2:]
                 real_move = ord(real_move[0]) - 97, int(real_move[1]) - 1
                 rect = self._get_screen_coord_rect(real_move[0], (7 - real_move[1]))
-                circle_radius = 18
+                circle_radius = int((self.square_size * CIRCLE_SCALE) // 2)
                 center_x = rect[0] + (rect[2] // 2)  
                 center_y = rect[1] + (rect[3] // 2)
                 gfxdraw.filled_circle(self.board_surface, center_x, center_y, circle_radius, (0, 0, 0, 40))
@@ -251,6 +252,13 @@ class Board:
         return ((columns * (self.board_dimension // COLUMNS)), (rows * (self.board_dimension // ROWS)), 
                 (self.board_dimension // COLUMNS), (self.board_dimension // ROWS))
 
+    def resize(self, screen_width, screen_height):
+        self.square_size = int(0.9 * screen_height) // 8
+        self.board_dimension = self.square_size * 8
+        self.board_surface = pg.Surface((self.board_dimension, self.board_dimension))
+        self.board_surface.fill((255, 255, 255))
+        self.show_board(self.game)
+        self.show_pieces(self.game)
 
     def _update(self, game):
         self.DISPLAYSURF.blit(self.board_surface, ((game.SCREEN_WIDTH - self.board_dimension) // 2, (game.SCREEN_HEIGHT - self.board_dimension) // 2)) # Board surface
