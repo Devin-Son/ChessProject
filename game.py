@@ -130,18 +130,21 @@ class King(Piece):
 
 class Board:
     def __init__(self, size: tuple[int, int], game):
-        self.size = size
-        self.board = np.full((size[1], size[0]), None)
-        self.setup_pieces()
-        self.DISPLAYSURF = game.DISPLAYSURF
-        self.square_size = int(0.9 * game.SCREEN_HEIGHT) // 8
-        self.board_dimension = self.square_size * 8
-        self.board_surface = pg.Surface((self.board_dimension, self.board_dimension))
-        self.board_surface.fill((255, 255, 255))
-        self.color_theme = COLOR_THEME[0]
-        self.clicked_piece_position = None
-        self.game = game
-
+        try:
+            self.size = size
+            self.board = np.full((size[1], size[0]), None)
+            self.setup_pieces()
+            self.DISPLAYSURF = game.DISPLAYSURF
+            self.square_size = int(0.9 * game.SCREEN_HEIGHT) // 8
+            self.board_dimension = self.square_size * 8
+            self.board_surface = pg.Surface((self.board_dimension, self.board_dimension))
+            self.board_surface.fill((255, 255, 255))
+            self.color_theme = COLOR_THEME[0]
+            self.clicked_piece_position = None
+            self.game = game
+        except:
+            pass
+    
     def setup_pieces(self):
         piece_classes = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
         for color, row_pawn, row_back in [('white', 1, 0), ('black', 6, 7)]:
@@ -162,19 +165,19 @@ class Board:
         return self.board[y, x] if 0 <= x < self.size[0] and 0 <= y < self.size[1] else None
 
     # Console display of board
-    # def display(self): 
-    #     for y in range(self.size[1] - 1, -1, -1):
-    #         row = ''
-    #         for x in range(self.size[0]):
-    #             coordinate = f'{chr(x + 97)}{y + 1}'
-    #             piece = self.get_piece_at(coordinate)
-    #             if not piece:
-    #                 row += " .  "
-    #             elif piece.piece_type == '':
-    #                 row += " " + str(piece) + ' '
-    #             else:
-    #                 row += str(piece) + ' '
-    #         print(row)
+    def display(self): 
+        for y in range(self.size[1] - 1, -1, -1):
+            row = ''
+            for x in range(self.size[0]):
+                coordinate = f'{chr(x + 97)}{y + 1}'
+                piece = self.get_piece_at(coordinate)
+                if not piece:
+                    row += " .  "
+                elif piece.piece_type == '':
+                    row += " " + str(piece) + ' '
+                else:
+                    row += str(piece) + ' '
+            print(row)
 
     # Window display of board
     def show_board(self, game):
@@ -265,7 +268,7 @@ class Board:
 
 
 if __name__ == '__main__':
-    board = Board(BOARD_SIZE)
+    board = Board(BOARD_SIZE, None)
     board.place_piece(Rook('white', 'h6', board))
     board.place_piece(Pawn('white', 'd6', board))
     board.display()
