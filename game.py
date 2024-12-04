@@ -11,7 +11,7 @@ class Piece:
         self.color = color
         self.piece_type = piece_type
         self.coordinate = coordinate
-        self.position = ord(coordinate[0]) - 97, int(coordinate[1]) - 1 # Array position
+        self.position = ord(coordinate[0]) - 97, int(coordinate[1]) - 1 # x, y of piece
         self.board = board
         self.clicked = False
         self.piece_path = 'resources/pieces/'
@@ -47,7 +47,7 @@ class Pawn(Piece):
         if self.check_obstruction(self.position[0], self.position[1], 0, direction[1], 1) > 0:                                 # 1 space 
             moves.append(f"{chr(self.position[0] + 97)}{int(self.coordinate[1]) + direction[1]}")
             if (self.check_obstruction(self.position[0], self.position[1], 0, direction[1], 2) > 1 and                         # 2 spaces
-                (self.color == 'white' and self.position[1] == 1) or (self.color == 'black' and self.position[1] == 6)):       # Has not moved
+                ((self.color == 'white' and self.position[1] == 1) or (self.color == 'black' and self.position[1] == 6))):        # Has not moved
                 moves.append(f"{chr(self.position[0] + 97)}{int(self.coordinate[1]) + 2 * direction[1]}")
 
         # Capture moves
@@ -56,7 +56,8 @@ class Pawn(Piece):
         for capture_x in direction[0]:
             try:
                 if (self.check_obstruction(self.position[0], self.position[1], capture_x, direction[1], 1) == 0 and            # Obstructed diagonally
-                    (self.board.board[self.position[1] + direction[1]][self.position[0] + capture_x]).color != self.color):    # Opposite color
+                    (self.board.board[self.position[1] + direction[1]][self.position[0] + capture_x]).color != self.color and  # Opposite color
+                    (self.position[1] + direction[1]) >= 0 and (self.position[0] + capture_x) >= 0):                           # On board
                     moves.append(f"{chr(self.position[0] + 97)}x{chr(self.position[0] + 97 + capture_x)}{int(self.coordinate[1]) + direction[1]}")
             except:
                 continue
@@ -73,6 +74,30 @@ class Rook(Piece):
 
     def legal_moves(self):
         moves = []
+        direction = [[0, 1], [-1, 0], [0, -1], [1, 0]]
+        
+
+        # Moves
+        for current_direction in direction:
+            available_distance = self.check_obstruction(self.position[0], self.position[1], current_direction[0], current_direction[1], None)
+            for step in range(available_distance):
+                moves.append(f"{chr(self.position[0] + (97 + (step + 1) * current_direction[0]))}"
+                             f"{int(self.coordinate[1]) + ((step + 1) * current_direction[1])}")
+            # Captures
+            positions = self.board.get_pieces_of_type(self.color, self.visual)
+            try:
+                if (self.board.board[self.position[1] + (current_direction[1] * (available_distance + 1))]
+                                    [self.position[0] + (current_direction[0] * (available_distance + 1))].color != self.color):
+
+                    # TODO distuingish captures if two rooks in same column (Rhxd3) or same row (R3xa5). If two rooks can take same piece but
+                    # not in same row or column, distinguish by column. Assume that there can be any amount of rooks on the board.
+
+                    moves.append(f"Rx{chr(self.position[0] + (current_direction[0] * (available_distance + 1)) + 97)}"
+                                 f"{int(self.position[1] + (current_direction[1] * (available_distance + 1)) + 1)}")
+            except:
+                continue
+
+
 
         return moves
 
@@ -144,7 +169,7 @@ class Board:
             self.game = game
         except:
             pass
-    
+
     def setup_pieces(self):
         piece_classes = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
         for color, row_pawn, row_back in [('white', 1, 0), ('black', 6, 7)]:
@@ -163,6 +188,17 @@ class Board:
     def get_piece_at(self, coordinate: str) -> Piece:
         x, y = ord(coordinate[0].lower()) - 97, int(coordinate[1]) - 1
         return self.board[y, x] if 0 <= x < self.size[0] and 0 <= y < self.size[1] else None
+    
+    def get_pieces_of_type(self, color: str, type: str) -> list:
+        positions = []
+        for row in range(ROWS):
+            for column in range(COLUMNS):
+                checking = self.board[row][column]
+                if checking:
+                    if checking.visual == type and checking.color == color:
+                        position = checking.position[1], checking.position[0]
+                        positions.append(position)
+        return positions
 
     # Console display of board
     def display(self): 
@@ -269,8 +305,11 @@ class Board:
 
 if __name__ == '__main__':
     board = Board(BOARD_SIZE, None)
-    board.place_piece(Rook('white', 'h6', board))
-    board.place_piece(Pawn('white', 'd6', board))
+    board.place_piece(Rook('black', 'h6', board))
+    board.place_piece(Pawn('white', 'a6', board))
     board.display()
     piece = board.get_piece_at(input("What piece would you like to see the available moves for? "))
-    print(piece.legal_moves())
+    if piece:
+        print(piece.legal_moves())
+    else:
+        print("Empty space")
