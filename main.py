@@ -50,6 +50,7 @@ class Game:
 
 if __name__ == '__main__':
     game = Game()
+    print('hello')
     game.board.place_piece(Rook('black', 'd5', game.board))
     game.board.place_piece(Pawn('white', 'a6', game.board))
     game.update()
