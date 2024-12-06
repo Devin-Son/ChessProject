@@ -313,7 +313,6 @@ class Board:
     def _update(self, game):
         self.DISPLAYSURF.blit(self.board_surface, ((game.SCREEN_WIDTH - self.board_dimension) // 2, (game.SCREEN_HEIGHT - self.board_dimension) // 2)) # Board surface
 
-
 if __name__ == '__main__':
     board = Board(BOARD_SIZE, None)
     board.place_piece(Rook('black', 'h6', board))
