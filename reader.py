@@ -14,5 +14,3 @@ if __name__ == '__main__':
         tsv_file = csv.reader(file, delimiter="\t")
         for line in tsv_file:
             print(line[1], " ", line[2])
-
-
