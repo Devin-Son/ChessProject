@@ -291,7 +291,7 @@ class Board:
                     center_x = rect[0] + (rect[2] // 2)  
                     center_y = rect[1] + (rect[3] // 2)
                     temp_surface = pg.Surface(self.board_surface.get_size(), pg.SRCALPHA)
-                    outline_thickness = int(circle_radius // 7)
+                    outline_thickness = int(circle_radius // 5)
                     pg.draw.circle(temp_surface, (0, 0, 0, 40), (center_x, center_y), circle_radius, outline_thickness)
                     self.board_surface.blit(temp_surface, (0, 0))
 
