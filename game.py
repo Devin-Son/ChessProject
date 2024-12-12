@@ -81,7 +81,7 @@ class Rook(Piece):
         for current_direction in direction:
             available_distance = self.check_obstruction(self.position[0], self.position[1], current_direction[0], current_direction[1], None)
             for step in range(available_distance):
-                moves.append(f"{chr(self.position[0] + (97 + (step + 1) * current_direction[0]))}"
+                moves.append(f"R{chr(self.position[0] + (97 + (step + 1) * current_direction[0]))}"
                              f"{int(self.coordinate[1]) + ((step + 1) * current_direction[1])}")
             # Captures
             positions = self.board.get_pieces_of_type(self.color, self.visual)
